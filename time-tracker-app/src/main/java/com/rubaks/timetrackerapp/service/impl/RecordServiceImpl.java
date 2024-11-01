@@ -31,6 +31,10 @@ public class RecordServiceImpl implements RecordService {
     private final UserRepository userRepository;
     private final RecordMapper recordMapper;
 
+    // Создает новую запись на основе данных из RecordRequestDTO.
+    // Проверяет существование пользователя и задачи, связывает их с записью,
+    // выполняет валидацию времени и сохраняет запись в базе данных.
+    // Возвращает DTO созданной записи.
     public RecordResponseDTO createRecord(RecordRequestDTO recordRequestDTO) {
         Record record = recordMapper.toEntity(recordRequestDTO);
 
@@ -50,17 +54,22 @@ public class RecordServiceImpl implements RecordService {
         return recordMapper.toResponseDTO(createdRecord);
     }
 
+    // Извлекает все записи из базы данных,
     public List<RecordResponseDTO> getAllRecords() {
         return recordRepository.findAll().stream()
                 .map(recordMapper::toResponseDTO)
                 .collect(Collectors.toList());
     }
 
+    // Находит запись по ID, преобразует ее в DTO и возвращает.
     public Optional<RecordResponseDTO> getRecordById(Long recordId) {
         return recordRepository.findById(recordId)
                 .map(recordMapper::toResponseDTO);
     }
 
+    // Находит существующую запись по ID, валидирует ее,
+    // обновляет данные записи на основе RecordRequestDTO
+    // и сохраняет изменения. Возвращает обновленную запись в виде DTO.
     public RecordResponseDTO updateRecord(Long recordId, RecordRequestDTO recordRequestDTO) {
         return recordRepository.findById(recordId)
                 .map(existingRecord -> {
@@ -74,7 +83,7 @@ public class RecordServiceImpl implements RecordService {
                 }).orElseThrow(() -> new EntityNotFoundException("Record not found with ID: " + recordId));
     }
 
-
+    // Находит запись по ID и удаляет ее из базы данных.
     public boolean deleteRecord(Long recordId) {
         return recordRepository.findById(recordId)
                 .map(record -> {
@@ -84,6 +93,15 @@ public class RecordServiceImpl implements RecordService {
                 .orElseThrow(() -> new EntityNotFoundException("Record not found with ID: " + recordId));
     }
 
+    // Выполняет комплексную валидацию записи,
+    private void validateRecord(Record record) {
+        validateTimeNotNull(record);
+        validateStartTimeBeforeEndTime(record);
+        validateDuration(record);
+    }
+
+    // Проверяет, есть ли конфликты времени для пользователя с заданным ID
+    // на основе уже существующих записей в указанный день.
     private void checkTimeConflict(Long userId, LocalDateTime startTime, LocalDateTime endTime) {
         LocalDate date = startTime.toLocalDate();
         List<Record> existingRecords = recordRepository.findByUserIdAndDate(userId, date);
@@ -95,28 +113,29 @@ public class RecordServiceImpl implements RecordService {
         }
     }
 
+    // Проверяет, пересекаются ли заданные временные рамки с существующей записью.
     private boolean isTimeConflict(LocalDateTime startTime, LocalDateTime endTime, Record existingRecord) {
         return startTime.isBefore(existingRecord.getEndTime()) && endTime.isAfter(existingRecord.getStartTime());
     }
 
-    private void validateRecord(Record record) {
-        validateTimeNotNull(record);
-        validateStartTimeBeforeEndTime(record);
-        validateDuration(record);
-    }
-
+    // Проверяет, что время начала и окончания записи не равно null.
+    // Если одно из значений равно null, выбрасывает исключение.
     private void validateTimeNotNull(Record record) {
         if (record.getStartTime() == null || record.getEndTime() == null) {
             throw new IllegalArgumentException("Start and end times cannot be null.");
         }
     }
 
+    // Проверяет, что время начала записи происходит до времени окончания.
+    // Если это не так, выбрасывает исключение.
     private void validateStartTimeBeforeEndTime(Record record) {
         if (!record.getStartTime().isBefore(record.getEndTime())) {
             throw new IllegalArgumentException("Start time must be before end time.");
         }
     }
 
+    // Проверяет продолжительность записи: минимум 15 минут
+    // и кратность 15 минут. Выбрасывает исключение при нарушении условий.
     private void validateDuration(Record record) {
         Duration duration = Duration.between(record.getStartTime(), record.getEndTime());
         if (duration.toMinutes() < 15) {

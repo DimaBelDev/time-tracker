@@ -9,11 +9,17 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: validate
     show-sql: true
     properties:
       hibernate:
-        format_sql: true
+        format_sql: false
+  flyway:
+    enabled: true
+    url: jdbc:postgresql://localhost:5432/TimeTracker
+    user: postgres
+    password: postgres
+    locations: classpath:db/migration
 application:
   security:
     jwt:
