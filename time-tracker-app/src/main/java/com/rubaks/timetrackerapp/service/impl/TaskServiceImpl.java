@@ -7,7 +7,6 @@ import com.rubaks.timetrackerapp.entity.Task;
 import com.rubaks.timetrackerapp.mapper.TaskMapper;
 import com.rubaks.timetrackerapp.repository.ProjectRepository;
 import com.rubaks.timetrackerapp.repository.TaskRepository;
-import com.rubaks.timetrackerapp.service.ProjectService;
 import com.rubaks.timetrackerapp.service.TaskService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
