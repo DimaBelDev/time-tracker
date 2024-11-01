@@ -1,0 +1,12 @@
+version: '4.34.4'
+
+services:
+
+  time-tracker-db:
+    image: postgres:15.8
+    environment:
+      POSTGRES_DB: TimeTracker
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
