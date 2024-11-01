@@ -19,11 +19,7 @@ public class LogoutServiceImpl implements LogoutHandler {
     // Он извлекает JWT-токен из заголовка авторизации, помечает его как истекший и отозванный
     // в базе данных, а также очищает контекст безопасности, чтобы завершить сессию пользователя.
     @Override
-    public void logout(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            Authentication authentication
-    ) {
+    public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
         if (authHeader == null ||!authHeader.startsWith("Bearer ")) {

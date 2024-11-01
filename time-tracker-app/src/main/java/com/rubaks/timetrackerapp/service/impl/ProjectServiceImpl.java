@@ -28,11 +28,13 @@ public class ProjectServiceImpl implements ProjectService {
                 .map(projectMapper::toResponseDTO)
                 .collect(Collectors.toList());
     }
+
     // Ищет проект по ID и возвращает его.
     public Optional<ProjectResponseDTO> getProjectById(Long projectId) {
         return projectRepository.findById(projectId)
                 .map(projectMapper::toResponseDTO);
     }
+
     // Создает новый проект из DTO-запроса, сохраняет его.
     public ProjectResponseDTO createProject(ProjectRequestDTO projectRequestDTO) {
         Project project = projectMapper.toProject(projectRequestDTO);
@@ -51,6 +53,7 @@ public class ProjectServiceImpl implements ProjectService {
                 })
                 .orElseThrow(() -> new EntityNotFoundException("Project not found with ID: " + id));
     }
+
     // Удаляет проект по ID
     public boolean deleteProject(Long id) {
         return projectRepository.findById(id)
@@ -60,4 +63,5 @@ public class ProjectServiceImpl implements ProjectService {
                 })
                 .orElseThrow(() -> new EntityNotFoundException("Project not found with ID: " + id));
     }
+
 }
