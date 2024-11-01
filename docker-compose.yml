@@ -2,6 +2,19 @@ version: '4.34.4'
 
 services:
 
+  time-tracker-app:
+    build:
+      context: ./time-tracker-app
+      dockerfile: Dockerfile
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://time-tracker-db:5432/TimeTracker
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+    depends_on:
+      - time-tracker-db
+    ports:
+      - "8080:8080"
+
   time-tracker-db:
     image: postgres:15.8
     environment:

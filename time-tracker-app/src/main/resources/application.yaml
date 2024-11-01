@@ -2,10 +2,10 @@ spring:
   application:
     name: time-tracker-app
   datasource:
-    url: jdbc:postgresql://localhost:5432/TimeTracker
+    url: ${SPRING_DATASOURCE_URL}
     driver-class-name: org.postgresql.Driver
-    username: postgres
-    password: postgres
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
@@ -16,9 +16,9 @@ spring:
         format_sql: false
   flyway:
     enabled: true
-    url: jdbc:postgresql://localhost:5432/TimeTracker
-    user: postgres
-    password: postgres
+    url: ${SPRING_DATASOURCE_URL}
+    user: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
     locations: classpath:db/migration
 application:
   security:
